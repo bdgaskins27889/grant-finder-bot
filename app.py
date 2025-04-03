@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Sample data: expanded list of grants with eligibility criteria and levels
+# Expanded grant dataset with eligibility criteria and levels
 grants = [
     # Federal Grants
     {
@@ -90,7 +90,7 @@ grants = [
         "name": "Special Needs Grant",
         "description": "Tailored to support individuals and organizations addressing unique community needs.",
         "required_status": "other",
-        "level": "federal"  # For demo purposes; could be federal or other level.
+        "level": "federal"  # For demo purposes; could be federal or another level.
     }
 ]
 
@@ -111,7 +111,7 @@ def find_eligible_grants(user_info):
             if user_info.get("status") != grant["required_status"]:
                 continue
 
-        # Check for local state requirements if applicable
+        # Check for state requirements if applicable
         if "states" in grant:
             if user_info.get("state") not in grant["states"]:
                 continue
