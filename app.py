@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # Expanded grant dataset with eligibility criteria, levels, due dates, and requirements
 grants = [
@@ -9,7 +10,7 @@ grants = [
         "min_revenue": 0,
         "max_revenue": 1000000,
         "required_business_type": "small_business",
-        "level": "federal",
+        "level": "Federal",
         "due_date": "2025-06-30",
         "requirements": "Submit business plan, revenue details, and innovation summary."
     },
@@ -17,7 +18,7 @@ grants = [
         "name": "Federal Research Grant",
         "description": "Supports academic research and innovation in educational institutions.",
         "required_status": "education",
-        "level": "federal",
+        "level": "Federal",
         "due_date": "2025-05-15",
         "requirements": "Submit a detailed proposal and institutional affiliation."
     },
@@ -25,7 +26,7 @@ grants = [
         "name": "Federal Disaster Relief Grant",
         "description": "Provides funds for businesses and communities impacted by natural disasters.",
         "required_status": "small_business",
-        "level": "federal",
+        "level": "Federal",
         "due_date": "2025-07-10",
         "requirements": "Documentation of disaster impact and recovery plan."
     },
@@ -36,7 +37,7 @@ grants = [
         "description": "For local artists and cultural organizations seeking to promote arts in their community.",
         "states": ["NY", "CA", "TX"],
         "required_status": "education",  # Adjust as needed.
-        "level": "state",
+        "level": "State",
         "due_date": "2025-04-30",
         "requirements": "Portfolio, project summary, and budget."
     },
@@ -47,7 +48,7 @@ grants = [
         "max_revenue": 500000,
         "states": ["FL", "TX", "CA", "NC"],
         "required_business_type": "small_business",
-        "level": "state",
+        "level": "State",
         "due_date": "2025-08-15",
         "requirements": "Financial statements, expansion plan, and business strategy."
     },
@@ -56,7 +57,7 @@ grants = [
         "description": "Assists nonprofit organizations with sustaining and growing community services.",
         "states": ["NC", "VA", "MI"],
         "required_status": "nonprofit",
-        "level": "state",
+        "level": "State",
         "due_date": "2025-09-01",
         "requirements": "Proof of nonprofit status, budget, and program overview."
     },
@@ -67,7 +68,7 @@ grants = [
         "description": "For local businesses and community organizations in select states.",
         "states": ["NC", "VA", "SC"],
         "required_status": "small_business",
-        "level": "local",
+        "level": "Local",
         "due_date": "2025-03-31",
         "requirements": "Local business verification and community development plan."
     },
@@ -76,7 +77,7 @@ grants = [
         "description": "Provides funding for local arts and cultural projects in select cities.",
         "states": ["NY", "CA", "TX", "NC"],
         "required_status": "nonprofit",
-        "level": "local",
+        "level": "Local",
         "due_date": "2025-05-31",
         "requirements": "Project description, budget, and artistic portfolio."
     },
@@ -86,7 +87,7 @@ grants = [
         "name": "Nonprofit Development Grant",
         "description": "For registered nonprofit organizations aiming to expand their community services.",
         "required_status": "nonprofit",
-        "level": "other",
+        "level": "Specialized",
         "due_date": "2025-07-20",
         "requirements": "501(c)(3) verification and detailed program plan."
     },
@@ -94,7 +95,7 @@ grants = [
         "name": "Education Advancement Grant",
         "description": "For individuals or institutions seeking to improve educational opportunities.",
         "required_status": "education",
-        "level": "other",
+        "level": "Specialized",
         "due_date": "2025-06-15",
         "requirements": "Educational improvement plan and relevant credentials."
     },
@@ -104,7 +105,7 @@ grants = [
         "min_revenue": 0,
         "max_revenue": 100000,
         "required_business_type": "startup",
-        "level": "other",
+        "level": "Specialized",
         "due_date": "2025-04-15",
         "requirements": "Startup pitch, financial projections, and team background."
     },
@@ -112,14 +113,13 @@ grants = [
         "name": "Special Needs Grant",
         "description": "Tailored to support individuals and organizations addressing unique community needs.",
         "required_status": "other",
-        "level": "federal",
+        "level": "Federal",
         "due_date": "2025-08-01",
         "requirements": "Special needs project proposal and impact assessment."
     }
 ]
 
-# Function to filter grants based on user responses
-def find_eligible_grants(user_info):
+def find_eligible_grants(user_info, level_filter=None):
     eligible = []
     for grant in grants:
         # Check revenue requirements if applicable
@@ -140,58 +140,64 @@ def find_eligible_grants(user_info):
             if user_info.get("state") not in grant["states"]:
                 continue
 
+        # Apply level filter if selected
+        if level_filter and grant.get("level", "").lower() != level_filter.lower():
+            continue
+
         eligible.append(grant)
     return eligible
 
-# Main Streamlit app
 def main():
+    st.set_page_config(page_title="Grant Guru", layout="wide")
     st.title("Grant Guru")
-    st.write("Welcome to Grant Guru – your friendly, all-knowing grant guide! Answer a few questions below, and we'll search nationally for grants you're eligible for, complete with due dates and specific requirements.")
+    st.write("Your smart, interactive grant search tool inspired by Instrumentl. Get matched with national, state, local, and specialized grants tailored to your needs.")
 
-    # Qualifying questions
-    st.header("Step 1: Qualifying Questions")
+    # Sidebar for user inputs and advanced filtering
+    st.sidebar.header("Filter Your Grants")
     
-    user_status = st.radio(
-        "What best describes your current status?",
+    user_status = st.sidebar.selectbox(
+        "Select your status:",
         ("small_business", "startup", "nonprofit", "education", "other")
     )
     
-    # Only ask for revenue if the user is a business or startup
     annual_revenue = None
     if user_status in ["small_business", "startup"]:
-        annual_revenue = st.number_input("Enter your annual revenue (in USD)", min_value=0, step=1000)
+        annual_revenue = st.sidebar.number_input("Enter your annual revenue (in USD)", min_value=0, step=1000)
     
-    # Ask for state for local and state-specific grant opportunities
-    state = st.text_input("Enter your state (use the two-letter abbreviation, e.g., NC, NY, CA)", max_chars=2)
+    state = st.sidebar.text_input("Enter your state (2-letter code)", max_chars=2)
     state = state.upper().strip() if state else ""
 
-    st.write("If you are a nonprofit or in education, revenue info is not required.")
+    # Advanced filter: choose grant level
+    level_filter = st.sidebar.selectbox(
+        "Select Grant Level (optional):",
+        ("All", "Federal", "State", "Local", "Specialized")
+    )
+    if level_filter == "All":
+        level_filter = None
 
-    if st.button("Find Grants"):
-        # Package user info for filtering
+    # Sidebar button to search
+    if st.sidebar.button("Search Grants"):
         user_info = {"status": user_status, "business_type": user_status, "state": state}
         if annual_revenue is not None and annual_revenue != 0:
             user_info["annual_revenue"] = annual_revenue
-        
-        eligible_grants = find_eligible_grants(user_info)
-        
-        st.header("Step 2: Eligible Grants")
-        if eligible_grants:
-            for grant in eligible_grants:
-                st.subheader(grant["name"])
-                st.write(grant["description"])
-                st.write(f"**Due Date:** {grant.get('due_date', 'N/A')}")
-                st.write(f"**Requirements:** {grant.get('requirements', 'N/A')}")
-                st.caption(f"Grant Level: {grant.get('level', 'N/A').capitalize()}")
-                st.markdown("---")
-        else:
-            st.write("Sorry, we couldn't find any grants that match your current profile. Please try adjusting your inputs or contact us for further consulting.")
 
-    st.markdown("---")
+        eligible_grants = find_eligible_grants(user_info, level_filter)
+        
+        st.subheader("Eligible Grants")
+        if eligible_grants:
+            # Create a dataframe for a clean tabular view
+            df = pd.DataFrame(eligible_grants)
+            # Rearranging columns for better display order
+            columns_order = ["name", "description", "due_date", "requirements", "level"]
+            df = df[[col for col in columns_order if col in df.columns]]
+            st.dataframe(df)
+        else:
+            st.write("No grants found matching your criteria. Try adjusting your filters or contact us for personalized support.")
     
-    # Consulting & Pricing Section
+    # Additional info / consulting details at the bottom
+    st.markdown("---")
     st.header("Consulting & Pricing")
-    st.write("Grant Guru is offered as part of our comprehensive consulting services. Our pricing is designed to be flexible:")
+    st.write("Grant Guru is part of our comprehensive consulting services. Choose a plan that works for you:")
     st.markdown("""
     - **Basic Grant Search:** \$29.99 per search session  
     - **Monthly Subscription:** \$99.99/month for unlimited searches and personalized consulting  
