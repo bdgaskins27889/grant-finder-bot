@@ -1,42 +1,96 @@
 import streamlit as st
 
-# Sample data: list of grants with eligibility criteria
+# Sample data: expanded list of grants with eligibility criteria and levels
 grants = [
+    # Federal Grants
     {
-        "name": "Small Business Innovation Grant",
-        "description": "For small businesses with less than $500K annual revenue in innovative fields.",
+        "name": "Federal Innovation Grant",
+        "description": "A federal grant designed to support innovative small businesses across the nation.",
         "min_revenue": 0,
-        "max_revenue": 500000,
-        "required_business_type": "small_business"
+        "max_revenue": 1000000,
+        "required_business_type": "small_business",
+        "level": "federal"
     },
+    {
+        "name": "Federal Research Grant",
+        "description": "Supports academic research and innovation in educational institutions.",
+        "required_status": "education",
+        "level": "federal"
+    },
+    {
+        "name": "Federal Disaster Relief Grant",
+        "description": "Provides funds for businesses and communities impacted by natural disasters.",
+        "required_status": "small_business",
+        "level": "federal"
+    },
+    
+    # State Grants
+    {
+        "name": "State Arts Grant",
+        "description": "For local artists and cultural organizations seeking to promote arts in their community.",
+        "states": ["NY", "CA", "TX"],
+        "required_status": "education",  # Demo purpose; adjust as needed.
+        "level": "state"
+    },
+    {
+        "name": "State Business Expansion Grant",
+        "description": "Supports state-level small business expansion initiatives in targeted industries.",
+        "min_revenue": 50000,
+        "max_revenue": 500000,
+        "states": ["FL", "TX", "CA", "NC"],
+        "required_business_type": "small_business",
+        "level": "state"
+    },
+    {
+        "name": "State Nonprofit Sustainability Grant",
+        "description": "Assists nonprofit organizations with sustaining and growing community services.",
+        "states": ["NC", "VA", "MI"],
+        "required_status": "nonprofit",
+        "level": "state"
+    },
+    
+    # Local Grants
+    {
+        "name": "Local Community Grant",
+        "description": "For local businesses and community organizations in select states.",
+        "states": ["NC", "VA", "SC"],
+        "required_status": "small_business",
+        "level": "local"
+    },
+    {
+        "name": "Local Arts & Culture Grant",
+        "description": "Provides funding for local arts and cultural projects in select cities.",
+        "states": ["NY", "CA", "TX", "NC"],
+        "required_status": "nonprofit",
+        "level": "local"
+    },
+    
+    # Other Specialized Grants
     {
         "name": "Nonprofit Development Grant",
         "description": "For registered nonprofit organizations aiming to expand their community services.",
-        "required_status": "nonprofit"
+        "required_status": "nonprofit",
+        "level": "other"
     },
     {
         "name": "Education Advancement Grant",
         "description": "For individuals or institutions seeking to improve educational opportunities.",
-        "required_status": "education"
+        "required_status": "education",
+        "level": "other"
     },
     {
         "name": "Startup Seed Grant",
         "description": "For startups in early stages looking to scale up their operations.",
         "min_revenue": 0,
         "max_revenue": 100000,
-        "required_business_type": "startup"
+        "required_business_type": "startup",
+        "level": "other"
     },
     {
-        "name": "Local Community Grant",
-        "description": "For local businesses and community organizations in select states.",
-        "states": ["NC", "VA", "SC"],
-        "required_status": "small_business"
-    },
-    {
-        "name": "State Arts Grant",
-        "description": "For local artists and cultural organizations seeking to promote arts in their community.",
-        "states": ["NY", "CA", "TX"],
-        "required_status": "education"  # Using education here for demo; adjust as needed.
+        "name": "Special Needs Grant",
+        "description": "Tailored to support individuals and organizations addressing unique community needs.",
+        "required_status": "other",
+        "level": "federal"  # For demo purposes; could be federal or other level.
     }
 ]
 
@@ -67,8 +121,8 @@ def find_eligible_grants(user_info):
 
 # Main Streamlit app
 def main():
-    st.title("Grant Finder Bot")
-    st.write("Welcome to the Grant Finder Bot! Answer a few questions below to see which grants you might be eligible for.")
+    st.title("Grant Guru")
+    st.write("Welcome to Grant Guru – your friendly, all-knowing grant guide! Answer a few questions below, and we'll match you with local, state, federal, and other specialized grants tailored to your needs.")
 
     # Qualifying questions
     st.header("Step 1: Qualifying Questions")
@@ -83,7 +137,7 @@ def main():
     if user_status in ["small_business", "startup"]:
         annual_revenue = st.number_input("Enter your annual revenue (in USD)", min_value=0, step=1000)
     
-    # Ask for state for local grant opportunities
+    # Ask for state for local and state grant opportunities
     state = st.text_input("Enter your state (use the two-letter abbreviation, e.g., NC, NY, CA)", max_chars=2)
     state = state.upper().strip() if state else ""
 
@@ -102,7 +156,8 @@ def main():
             for grant in eligible_grants:
                 st.subheader(grant["name"])
                 st.write(grant["description"])
-                # Optionally, you could list detailed requirements here
+                if "level" in grant:
+                    st.caption(f"Grant Level: {grant['level'].capitalize()}")
         else:
             st.write("Sorry, we couldn't find any grants that match your current profile. Please try adjusting your inputs or contact us for further consulting.")
 
@@ -110,13 +165,13 @@ def main():
     
     # Consulting & Pricing Section
     st.header("Consulting & Pricing")
-    st.write("This Grant Finder feature is provided as part of our consulting services. Our pricing is designed to be flexible:")
+    st.write("Grant Guru is offered as part of our comprehensive consulting services. Our pricing is designed to be flexible:")
     st.markdown("""
     - **Basic Grant Search:** \$29.99 per search session  
     - **Monthly Subscription:** \$99.99/month for unlimited searches and personalized consulting  
     - **Annual Package:** \$999.99/year for full-service grant consulting, including application support  
     """)
     st.write("Contact us for custom packages and enterprise solutions!")
-    
+
 if __name__ == '__main__':
     main()
