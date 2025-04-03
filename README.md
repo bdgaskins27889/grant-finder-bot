@@ -14,4 +14,4 @@ Grant Guru is your friendly, all-knowing grant guide, designed to lead you throu
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/grant-guru.git
+   git clone https://github.com/bdgaskins27889/grant-guru.git
