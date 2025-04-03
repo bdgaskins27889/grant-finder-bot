@@ -150,7 +150,7 @@ def find_eligible_grants(user_info, level_filter=None):
 def main():
     st.set_page_config(page_title="Grant Guru", layout="wide")
     st.title("Grant Guru")
-    st.write("Your smart, interactive grant search tool inspired by Instrumentl. Get matched with national, state, local, and specialized grants tailored to your needs.")
+    st.write("Your smart, interactive grant search tool inspired by Instrumentl. Let our intelligent matching eliminate the guesswork and instantly discover your best-fit grant opportunities.")
 
     # Sidebar for user inputs and advanced filtering
     st.sidebar.header("Filter Your Grants")
@@ -187,15 +187,30 @@ def main():
         if eligible_grants:
             # Create a dataframe for a clean tabular view
             df = pd.DataFrame(eligible_grants)
-            # Rearranging columns for better display order
             columns_order = ["name", "description", "due_date", "requirements", "level"]
             df = df[[col for col in columns_order if col in df.columns]]
             st.dataframe(df)
         else:
             st.write("No grants found matching your criteria. Try adjusting your filters or contact us for personalized support.")
     
-    # Additional info / consulting details at the bottom
     st.markdown("---")
+    
+    # Section: Powerful Features
+    st.header("Our Powerful Features")
+    st.markdown("""
+    **Intelligent Matching:**  
+    Eliminate the guesswork. Instantly discover your best-fit grant opportunities using our advanced matching engine.
+
+    **Active RFP Database:**  
+    Access 22k+ active RFPs. Over 250 new opportunities are added weekly by our in-house experts.
+
+    **Active Funders Directory:**  
+    Discover new good-fit funders within our database of 400k active grant makers.
+    """)
+
+    st.markdown("---")
+    
+    # Consulting & Pricing Section
     st.header("Consulting & Pricing")
     st.write("Grant Guru is part of our comprehensive consulting services. Choose a plan that works for you:")
     st.markdown("""
