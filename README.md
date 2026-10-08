@@ -1,17 +1,15 @@
-# Grant Guru
+# Grant Guru (Grant Finder Bot)
 
-Grant Guru is your friendly, all-knowing grant guide, designed to lead you through the maze of funding opportunities with ease and a dash of wit. Whether you're a small business, startup, nonprofit, or education professional, Grant Guru quickly matches you with local, state, federal, and other specialized grants tailored to your needs. Think of it as your personal funding compass, lighting the way to the resources you need to succeed.
+**Pre-release prototype. NOT a live grant opportunity database.** Current records are illustrative examples, not confirmed funding programs. Do not use these listings to apply for grants.
 
-## Features
+## Run
+```sh
+python -m pip install -r requirements.txt
+streamlit run app.py
+```
 
-- **Interactive Experience:** Conversational, step-by-step questions using Streamlit.
-- **Tailored Grant Search:** Matches grants based on business type, annual revenue, and state.
-- **Local, State, Federal, and Specialized Grants:** Discover funding opportunities at all levels.
-- **Consulting & Pricing:** Integrated consulting services with transparent pricing options.
+## Before commercial release
+Replace demonstration records with verified source-linked current grant opportunities, build deadline/eligibility validation and tests, verify payment flows, and add privacy policy and terms. Until then, no subscriptions or verified grant discovery claims.
 
-## Installation
-
-1. **Clone the Repository:**
-
-   ```bash
-   git clone https://github.com/bdgaskins27889/grant-guru.git
+## IP and licensing
+See LICENSE for the prospective proprietary notice, subject to verified code ownership and third-party rights. Earlier AGPL-3.0 and CC BY-NC-SA 4.0 statements in this repository may have granted rights that cannot be rescinded; obtain an IP/legal review before claiming exclusivity. Legacy BIAS-VI notices are preserved for provenance, not represented as new license terms for unrelated software.
