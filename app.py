@@ -1,3 +1,4 @@
+from datetime import date
 import streamlit as st
 import pandas as pd
 
@@ -144,13 +145,16 @@ def find_eligible_grants(user_info, level_filter=None):
         if level_filter and grant.get("level", "").lower() != level_filter.lower():
             continue
 
+        if date.fromisoformat(grant["due_date"]) < date.today():
+            continue
         eligible.append(grant)
     return eligible
 
 def main():
     st.set_page_config(page_title="Grant Guru", layout="wide")
-    st.title("Grant Guru")
-    st.write("Your smart, interactive grant search tool inspired by Instrumentl. Let our intelligent matching eliminate the guesswork and instantly discover your best-fit grant opportunities.")
+    st.title("Grant Guru — Demo Only")
+    st.warning("Prototype: sample records are illustrative, unverified, and NOT real/current grant opportunities. No paid search is available.")
+    st.write("Explore a demonstration of state, applicant type and grant-level filtering. For real grants, verify opportunities and deadlines at official funding sources.")
 
     # Sidebar for user inputs and advanced filtering
     st.sidebar.header("Filter Your Grants")
@@ -195,30 +199,7 @@ def main():
     
     st.markdown("---")
     
-    # Section: Powerful Features
-    st.header("Our Powerful Features")
-    st.markdown("""
-    **Intelligent Matching:**  
-    Eliminate the guesswork. Instantly discover your best-fit grant opportunities using our advanced matching engine.
-
-    **Active RFP Database:**  
-    Access 22k+ active RFPs. Over 250 new opportunities are added weekly by our in-house experts.
-
-    **Active Funders Directory:**  
-    Discover new good-fit funders within our database of 400k active grant makers.
-    """)
-
-    st.markdown("---")
-    
-    # Consulting & Pricing Section
-    st.header("Consulting & Pricing")
-    st.write("Grant Guru is part of our comprehensive consulting services. Choose a plan that works for you:")
-    st.markdown("""
-    - **Basic Grant Search:** \$29.99 per search session  
-    - **Monthly Subscription:** \$99.99/month for unlimited searches and personalized consulting  
-    - **Annual Package:** \$999.99/year for full-service grant consulting, including application support  
-    """)
-    st.write("Contact us for custom packages and enterprise solutions!")
+    st.info("Real grant listings, live application links, source verification and paid subscription services are not yet available.")
 
 if __name__ == '__main__':
     main()
